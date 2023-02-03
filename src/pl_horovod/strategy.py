@@ -28,7 +28,7 @@ from pytorch_lightning.plugins.precision import PrecisionPlugin
 from pytorch_lightning.strategies.parallel import ParallelStrategy
 from pytorch_lightning.strategies.strategy import TBroadcast
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
-from pytorch_lightning.utilities.rank_zero import rank_zero_deprecation, rank_zero_only
+from pytorch_lightning.utilities.rank_zero import rank_zero_only
 from torch import Tensor
 from torch.optim import Optimizer
 
@@ -49,15 +49,6 @@ class HorovodStrategy(ParallelStrategy):
         checkpoint_io: Optional[CheckpointIO] = None,
         precision_plugin: Optional[PrecisionPlugin] = None,
     ):
-        rank_zero_deprecation(
-            "`The `HorovodStrategy`: `Trainer(strategy='horovod')` has been deprecated in v1.9.0 and will be removed"
-            " in v2.0.0. You can try using the `Trainer(strategy='ddp')` instead."
-        )
-        if not _HOROVOD_AVAILABLE:
-            raise MisconfigurationException(
-                'Requested `strategy="horovod"`, but Horovod is not installed.'
-                " Install with `HOROVOD_WITH_PYTORCH=1 pip install horovod[pytorch]`"
-            )
         super().__init__(
             accelerator=accelerator,
             parallel_devices=parallel_devices,

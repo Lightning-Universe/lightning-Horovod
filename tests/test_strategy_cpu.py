@@ -22,6 +22,7 @@ from pytorch_lightning.demos.boring_classes import BoringModel
 from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE
 from torch import optim
 
+from pl_horovod.strategy import HorovodStrategy
 from tests.helpers import BasicGAN, _run_horovod
 
 if _HOROVOD_AVAILABLE:
@@ -88,15 +89,14 @@ def test_multi_optimizer(tmpdir):
     model = BasicGAN()
 
     # fit model
-    with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-        trainer = Trainer(
-            default_root_dir=str(tmpdir),
-            enable_progress_bar=False,
-            max_epochs=1,
-            limit_train_batches=0.4,
-            limit_val_batches=0.2,
-            strategy="horovod",
-        )
+    trainer = Trainer(
+        default_root_dir=str(tmpdir),
+        enable_progress_bar=False,
+        max_epochs=1,
+        limit_train_batches=0.4,
+        limit_val_batches=0.2,
+        strategy=HorovodStrategy(),
+    )
     trainer.fit(model)
     assert trainer.state.finished, f"Training failed with {trainer.state}"
 
@@ -147,16 +147,15 @@ def test_result_reduce_horovod(tmpdir):
         model = TestModel()
         model.val_dataloader = None
 
-        with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-            trainer = Trainer(
-                default_root_dir=tmpdir,
-                limit_train_batches=2,
-                limit_val_batches=2,
-                max_epochs=1,
-                log_every_n_steps=1,
-                enable_model_summary=False,
-                logger=False,
-            )
+        trainer = Trainer(
+            default_root_dir=tmpdir,
+            limit_train_batches=2,
+            limit_val_batches=2,
+            max_epochs=1,
+            log_every_n_steps=1,
+            enable_model_summary=False,
+            logger=False,
+        )
 
         trainer.fit(model)
 
@@ -182,14 +181,13 @@ def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     init_lr = 0.1 * num_workers
 
     with patch("horovod.torch.size", return_value=8):
-        with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-            trainer = Trainer(
-                default_root_dir=tmpdir,
-                max_epochs=1,
-                limit_val_batches=0.5,
-                limit_train_batches=0.2,
-                strategy="horovod",
-            )
+        trainer = Trainer(
+            default_root_dir=tmpdir,
+            max_epochs=1,
+            limit_val_batches=0.5,
+            limit_train_batches=0.2,
+            strategy=HorovodStrategy(),
+        )
         trainer.fit(model)
 
     adjusted_lr1 = [pg["lr"] for pg in trainer.optimizers[0].param_groups][0]

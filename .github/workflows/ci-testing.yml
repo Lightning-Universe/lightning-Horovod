@@ -84,7 +84,6 @@ jobs:
       run: coverage run --source pl_horovod -m pytest src tests -v
 
     - name: Statistics
-      if: success()
       run: |
         coverage report
         coverage xml
