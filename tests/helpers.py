@@ -102,7 +102,7 @@ class BasicGAN(LightningModule):
     def forward(self, z):
         return self.generator(z)
 
-    def adversarial_loss(self, y_hat, y):
+    def _adversarial_loss(self, y_hat, y):
         return F.binary_cross_entropy(y_hat, y)
 
     def _generator_loss(self, imgs):
@@ -119,7 +119,7 @@ class BasicGAN(LightningModule):
         valid = valid.type_as(imgs)
 
         # adversarial loss is binary cross-entropy
-        loss = self.adversarial_loss(self.discriminator(self.generated_imgs), valid)
+        loss = self._adversarial_loss(self.discriminator(self.generated_imgs), valid)
         self.log("g_loss", loss, prog_bar=True, logger=True)
         return loss
 
@@ -128,13 +128,13 @@ class BasicGAN(LightningModule):
         valid = torch.ones(imgs.size(0), 1)
         valid = valid.type_as(imgs)
 
-        real_loss = self.adversarial_loss(self.discriminator(imgs), valid)
+        real_loss = self._adversarial_loss(self.discriminator(imgs), valid)
 
         # how well can it label as fake?
         fake = torch.zeros(imgs.size(0), 1)
         fake = fake.type_as(fake)
 
-        fake_loss = self.adversarial_loss(self.discriminator(self.generated_imgs.detach()), fake)
+        fake_loss = self._adversarial_loss(self.discriminator(self.generated_imgs.detach()), fake)
 
         # discriminator loss is the average of these
         loss = (real_loss + fake_loss) / 2
@@ -217,7 +217,7 @@ def run_model_test_without_loggers(
 
 
 # This script will run the actual test model training in parallel
-TEST_SCRIPT = os.path.join(os.path.dirname(__file__), "data", "horovod", "train_default_model.py")
+TEST_SCRIPT = os.path.join(_PATH_TESTS_DIR, "model", "train_default_model.py")
 
 
 def _run_horovod(trainer_options):
