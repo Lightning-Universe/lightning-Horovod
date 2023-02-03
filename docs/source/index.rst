@@ -10,7 +10,7 @@ PL-Horovod documentation
    :name: start
    :caption: Start here
 
-   overview
+   readme
 
 
 Indices and tables
