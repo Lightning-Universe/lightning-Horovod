@@ -36,5 +36,4 @@ jobs:
   check-docs:
     uses: Lightning-AI/utilities/.github/workflows/check-docs.yml@main
     with:
-      actions-ref: main
       requirements-file: "docs/requirements.txt"
