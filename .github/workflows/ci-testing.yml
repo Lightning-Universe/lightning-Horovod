@@ -18,12 +18,15 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, macOS-10.15]
-        python-version: [3.9]
+        python-version: [3.8]
         requires: ['oldest', 'latest']
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
     timeout-minutes: 35
-
+    env:
+      HOROVOD_BUILD_ARCH_FLAGS: "-mfma"
+      HOROVOD_WITHOUT_MXNET: 1
+      HOROVOD_WITHOUT_TENSORFLOW: 1
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -53,27 +56,31 @@ jobs:
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-
+        restore-keys: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-
 
     - name: Install package & dependencies
       run: |
         pip --version
-        pip install -e . -U -q -r tests/requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+        pip install -e . -U -q -r tests/requirements.txt \
+          --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
         pip list
       shell: bash
 
+    - name: Reinstall Horovod if necessary
+      run: |
+        HOROVOD_BUILT=$(python -c "import horovod.torch; horovod.torch.nccl_built(); print('SUCCESS')" || true)
+        if [[ $HOROVOD_BUILT != "SUCCESS" ]]; then
+          pip uninstall -y horovod
+          grep "horovod" requirements/pytorch/strategies.txt > requirements/pytorch/horovod.txt
+          pip install --no-cache-dir -r requirements/pytorch/horovod.txt
+        fi
+        horovodrun --check-build
+        python -c "import horovod.torch"
+        pip list
+
     - name: Tests
       run: |
-        coverage run --source pl_horovod -m pytest src tests -v \
-          --junitxml=junit/test-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
-
-    - name: Upload pytest test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: pytest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
-        path: junit/test-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
-      if: failure()
+        coverage run --source pl_horovod -m pytest src tests -v
 
     - name: Statistics
       if: success()
