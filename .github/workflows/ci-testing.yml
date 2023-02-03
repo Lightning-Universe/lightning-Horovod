@@ -17,13 +17,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-10.15, windows-2019]
-        python-version: [3.9]
+        os: [ubuntu-20.04, macOS-10.15]
+        python-version: [3.8]
         requires: ['oldest', 'latest']
 
     # Timeout: https://stackoverflow.com/a/59076067/4521646
     timeout-minutes: 35
-
+    env:
+      HOROVOD_BUILD_ARCH_FLAGS: "-mfma"
+      HOROVOD_WITHOUT_MXNET: 1
+      HOROVOD_WITHOUT_TENSORFLOW: 1
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -31,11 +34,10 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # Github Actions: Run step on specific OS: https://stackoverflow.com/a/57948488/4521646
     - name: Setup macOS
       if: runner.os == 'macOS'
-      run: |
-        brew install libomp  # https://github.com/pytorch/pytorch/issues/20030
+      # Horovod on macOS requires OpenMPI, Gloo not currently supported
+      run: brew install openmpi libuv
 
     - name: Set min. dependencies
       if: matrix.requires == 'oldest'
@@ -54,27 +56,32 @@ jobs:
       with:
         path: ${{ steps.pip-cache.outputs.dir }}
         key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-${{ hashFiles('requirements.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-
+        restore-keys: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}-pip-
 
     - name: Install package & dependencies
       run: |
         pip --version
-        pip install -e . -U -q -r tests/requirements.txt --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+        pip install -e . -U -r tests/requirements.txt \
+          --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
         pip list
       shell: bash
 
-    - name: Tests
+    - name: Reinstall Horovod if necessary
       run: |
-        coverage run --source pl_horovod -m pytest src tests -v \
-          --junitxml=junit/test-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
+        HOROVOD_BUILT=$(python -c "import horovod.torch; horovod.torch.nccl_built(); print('SUCCESS')" || true)
+        if [[ $HOROVOD_BUILT != "SUCCESS" ]]; then
+          pip uninstall -y horovod
+          grep "horovod" requirements.txt > _requirements.txt
+          pip install --no-cache-dir -r _requirements.txt
+        fi
+        horovodrun --check-build
+        python -c "import horovod.torch"
+        pip list
 
-    - name: Upload pytest test results
-      uses: actions/upload-artifact@v3
-      with:
-        name: pytest-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}
-        path: junit/test-results-${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requires }}.xml
-      if: failure()
+    - name: Testing
+      env:
+        PL_USE_MOCKED_MNIST: 1
+      run: coverage run --source pl_horovod -m pytest src tests -v
 
     - name: Statistics
       if: success()

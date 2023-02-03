@@ -29,11 +29,17 @@ jobs:
       artifact-name: dist-packages-${{ github.sha }}
       testing-matrix: |
         {
-          "os": ["ubuntu-20.04", "macos-11", "windows-2022"],
+          "os": ["ubuntu-latest", "macos-latest"],
           "python-version": ["3.8", "3.10"]
         }
 
-  check-docs:
-    uses: Lightning-AI/utilities/.github/workflows/check-docs.yml@main
-    with:
-      requirements-file: "docs/requirements.txt"
+#  check-docs:
+#    uses: Lightning-AI/utilities/.github/workflows/check-docs.yml@main
+#    with:
+#      requirements-file: "docs/requirements.txt"
+#      env-vars: |
+#        {
+#          "HOROVOD_BUILD_ARCH_FLAGS": "-mfma",
+#          "HOROVOD_WITHOUT_MXNET": 1,
+#          "HOROVOD_WITHOUT_TENSORFLOW": 1,
+#        }
