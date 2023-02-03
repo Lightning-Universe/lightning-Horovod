@@ -3,3 +3,4 @@ codecov>=2.1
 pytest>=7.0
 pytest-cov
 scikit-learn
+torchvision
