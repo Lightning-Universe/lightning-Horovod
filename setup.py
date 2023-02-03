@@ -25,8 +25,7 @@ def _load_requirements(path_dir: str, file_name: str = "requirements.txt") -> li
 
 def _load_readme(path_readme: str = _PATH_README) -> str:
     with open(path_readme) as fp:
-        text = fp.read()
-    return text
+        return fp.read()
 
 
 about = _load_py_module("__about__.py")
