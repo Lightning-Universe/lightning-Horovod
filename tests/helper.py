@@ -11,6 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import json
+import os
+import shlex
+import subprocess
+import sys
+
 import numpy as np
 import torch
 import torch.nn.functional as F  # noqa: N812
@@ -204,3 +210,30 @@ def run_model_test_without_loggers(
     if not isinstance(model2, BoringModel):
         for dataloader in test_loaders:
             run_model_prediction(model2, dataloader, min_acc=min_acc)
+
+
+# This script will run the actual test model training in parallel
+TEST_SCRIPT = os.path.join(os.path.dirname(__file__), "data", "horovod", "train_default_model.py")
+
+
+def _run_horovod(trainer_options):
+    """Execute the training script across multiple workers in parallel."""
+    devices = trainer_options.get("devices", 1)
+    # TODO: Find out why coverage breaks CI.
+    # append = '-a' if '.coverage' in os.listdir(_PROJECT_ROOT) else ''
+    # str(num_processes), sys.executable, '-m', 'coverage', 'run', '--source', 'pytorch_lightning', append,
+    cmdline = [
+        "horovodrun",
+        "-np",
+        str(devices),
+        sys.executable,
+        TEST_SCRIPT,
+        "--trainer-options",
+        shlex.quote(json.dumps(trainer_options)),
+    ]
+    if trainer_options.get("accelerator", "cpu") == "gpu":
+        cmdline += ["--on-gpu"]
+    if devices == 2:
+        cmdline += ["--check-size"]
+    exit_code = subprocess.call(" ".join(cmdline), shell=True, env=os.environ.copy())
+    assert exit_code == 0

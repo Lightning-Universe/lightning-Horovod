@@ -15,7 +15,7 @@
 from tests.model.train_default_model import run_test_from_config
 
 
-def test_horovod_model_script(tmpdir):
+def test_model_script(tmpdir):
     """This just for testing/debugging horovod script without horovod..."""
     trainer_options = {
         "default_root_dir": str(tmpdir),
