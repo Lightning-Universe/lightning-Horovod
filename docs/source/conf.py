@@ -88,7 +88,7 @@ _convert_markdown(os.path.join(_PATH_ROOT, "README.md"), "readme.md")
 
 # If your documentation needs a minimal Sphinx version, state it here.
 
-needs_sphinx = "6.1"
+needs_sphinx = "5.3"
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
