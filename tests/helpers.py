@@ -83,7 +83,6 @@ class BasicGAN(LightningModule):
         self, hidden_dim: int = 128, learning_rate: float = 0.001, b1: float = 0.5, b2: float = 0.999, **kwargs
     ):
         super().__init__()
-        self.automatic_optimization = False
         self.hidden_dim = hidden_dim
         self.learning_rate = learning_rate
         self.b1 = b1
@@ -106,15 +105,8 @@ class BasicGAN(LightningModule):
     def adversarial_loss(self, y_hat, y):
         return F.binary_cross_entropy(y_hat, y)
 
-    def training_step(self, batch, batch_idx):
-        imgs, _ = batch
-        self.last_imgs = imgs
-
-        optimizer1, optimizer2 = self.optimizers()
-
-        # train generator
+    def _generator_loss(self, imgs):
         # sample noise
-        self.toggle_optimizer(optimizer1)
         z = torch.randn(imgs.shape[0], self.hidden_dim)
         z = z.type_as(imgs)
 
@@ -127,16 +119,11 @@ class BasicGAN(LightningModule):
         valid = valid.type_as(imgs)
 
         # adversarial loss is binary cross-entropy
-        g_loss = self.adversarial_loss(self.discriminator(self.generated_imgs), valid)
-        self.log("g_loss", g_loss, prog_bar=True, logger=True)
-        self.manual_backward(g_loss)
-        optimizer1.step()
-        optimizer1.zero_grad()
-        self.untoggle_optimizer(optimizer1)
+        loss = self.adversarial_loss(self.discriminator(self.generated_imgs), valid)
+        self.log("g_loss", loss, prog_bar=True, logger=True)
+        return loss
 
-        # train discriminator
-        # Measure discriminator's ability to classify real from generated samples
-        self.toggle_optimizer(optimizer2)
+    def _discriminator_loss(self, imgs):
         # how well can it label as real?
         valid = torch.ones(imgs.size(0), 1)
         valid = valid.type_as(imgs)
@@ -150,12 +137,25 @@ class BasicGAN(LightningModule):
         fake_loss = self.adversarial_loss(self.discriminator(self.generated_imgs.detach()), fake)
 
         # discriminator loss is the average of these
-        d_loss = (real_loss + fake_loss) / 2
-        self.log("d_loss", d_loss, prog_bar=True, logger=True)
-        self.manual_backward(d_loss)
-        optimizer2.step()
-        optimizer2.zero_grad()
-        self.untoggle_optimizer(optimizer2)
+        loss = (real_loss + fake_loss) / 2
+        self.log("d_loss", loss, prog_bar=True, logger=True)
+        return loss
+
+    def training_step(self, batch, batch_idx, optimizer_idx=None):
+        imgs, _ = batch
+        self.last_imgs = imgs
+
+        # train generator
+        if optimizer_idx == 0:
+            loss = self._generator_loss(imgs)
+        # train discriminator
+        elif optimizer_idx == 1:
+            # Measure discriminator's ability to classify real from generated samples
+            loss = self._discriminator_loss(imgs)
+        else:
+            raise ValueError(f"invalid `optimizer_idx={optimizer_idx}` out of set [0, 1]")
+
+        return loss
 
     def configure_optimizers(self):
         lr = self.learning_rate
@@ -167,7 +167,7 @@ class BasicGAN(LightningModule):
         return [opt_g, opt_d], []
 
     def train_dataloader(self):
-        return DataLoader(MNIST(root=_PATH_DATA_DIR), batch_size=16)
+        return DataLoader(MNIST(root=_PATH_DATA_DIR, train=True, download=True), batch_size=16)
 
 
 @torch.no_grad()
