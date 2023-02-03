@@ -78,9 +78,10 @@ jobs:
         python -c "import horovod.torch"
         pip list
 
-    - name: Tests
-      run: |
-        coverage run --source pl_horovod -m pytest src tests -v
+    - name: Testing
+      env:
+        PL_USE_MOCKED_MNIST: 1
+      run: coverage run --source pl_horovod -m pytest src tests -v
 
     - name: Statistics
       if: success()

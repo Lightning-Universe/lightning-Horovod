@@ -22,7 +22,7 @@ from pytorch_lightning.demos.boring_classes import BoringModel
 from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE
 from torch import optim
 
-from tests.helper import BasicGAN, _run_horovod
+from tests.helpers import BasicGAN, _run_horovod
 
 if _HOROVOD_AVAILABLE:
     import horovod

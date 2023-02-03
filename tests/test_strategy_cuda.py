@@ -25,7 +25,7 @@ from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
 from pl_horovod import _HOROVOD_NCCL_AVAILABLE
-from tests.helper import _run_horovod, run_model_test_without_loggers
+from tests.helpers import _run_horovod, run_model_test_without_loggers
 
 if _HOROVOD_AVAILABLE:
     import horovod
