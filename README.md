@@ -9,13 +9,6 @@ This is starter project template which shall simplify initial steps for each new
 
 \* the Read-The-Docs is failing as this one leads to the public domain which requires the repo to be public too
 
-## To be Done aka cross-check
-
-You still need to enable some external integrations such as:
-
-- [ ] lock the main breach in GH setting - no direct push without PR
-- [ ] set `gh-pages` as website and _docs_ as source folder in GH setting
-
 ## Tests / Docs notes
 
 - We are using [Napoleon style,](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html) and we shall use static types...
