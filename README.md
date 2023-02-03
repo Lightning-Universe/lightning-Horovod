@@ -5,7 +5,7 @@ This is starter project template which shall simplify initial steps for each new
 [![CI testing](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-testing.yml)
 [![General checks](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-checks.yml)
 [![Documentation Status](https://readthedocs.org/projects/PL-Horovod/badge/?version=latest)](https://PL-Horovod.readthedocs.io/en/latest/?badge=latest)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-Devel/PL-Horovod/main.svg?badge_token=mqheL1-cTn-280Vx4cJUdg)](https://results.pre-commit.ci/latest/github/Lightning-Devel/PL-Horovod/main?badge_token=mqheL1-cTn-280Vx4cJUdg)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-Devel/PL-Horovod/main.svg)](https://results.pre-commit.ci/latest/github/Lightning-Devel/PL-Horovod/main)
 
 \* the Read-The-Docs is failing as this one leads to the public domain which requires the repo to be public too
 
