@@ -6,11 +6,6 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  HOROVOD_BUILD_ARCH_FLAGS: "-mfma"
-  HOROVOD_WITHOUT_MXNET: 1
-  HOROVOD_WITHOUT_TENSORFLOW: 1
-
 jobs:
 
   test-docs:

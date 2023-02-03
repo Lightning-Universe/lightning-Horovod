@@ -7,10 +7,6 @@ jobs:
   # https://github.com/marketplace/actions/deploy-to-github-pages
   build-docs-deploy:
     runs-on: ubuntu-20.04
-    env:
-      HOROVOD_BUILD_ARCH_FLAGS: "-mfma"
-      HOROVOD_WITHOUT_MXNET: 1
-      HOROVOD_WITHOUT_TENSORFLOW: 1
     steps:
     - name: Checkout 🛎️
       uses: actions/checkout@v3
