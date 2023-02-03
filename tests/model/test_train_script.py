@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from tests_pytorch.models.data.horovod.train_default_model import run_test_from_config
+from tests.model.train_default_model import run_test_from_config
 
 
 def test_horovod_model_script(tmpdir):

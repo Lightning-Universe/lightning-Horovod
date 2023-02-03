@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 from contextlib import ExitStack
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -86,8 +87,7 @@ class HorovodStrategy(ParallelStrategy):
 
     @property
     def distributed_sampler_kwargs(self) -> Dict[str, Any]:
-        distributed_sampler_kwargs = {"num_replicas": self.world_size, "rank": self.global_rank}
-        return distributed_sampler_kwargs
+        return {"num_replicas": self.world_size, "rank": self.global_rank}
 
     @property
     def handles_gradient_accumulation(self) -> bool:
@@ -147,8 +147,7 @@ class HorovodStrategy(ParallelStrategy):
             self.join()
 
     def broadcast(self, obj: TBroadcast, src: int = 0) -> TBroadcast:
-        obj = hvd.broadcast_object(obj, src)
-        return obj
+        return hvd.broadcast_object(obj, src)
 
     def model_to_device(self) -> None:
         if self.root_device.type == "cuda":
@@ -214,7 +213,7 @@ class HorovodStrategy(ParallelStrategy):
     def _wrap_optimizers(
         self, optimizers: List[Optimizer], accumulate_grad_batches: int
     ) -> List["hvd.DistributedOptimizer"]:
-        """Wraps optimizers to perform gradient aggregation via allreduce."""
+        """Wrap optimizers to perform gradient aggregation via allreduce."""
         assert self.lightning_module is not None
         return [
             hvd.DistributedOptimizer(
@@ -234,6 +233,7 @@ class HorovodStrategy(ParallelStrategy):
 
     @classmethod
     def register_strategies(cls, strategy_registry: Dict) -> None:
+        """Register strategy."""
         strategy_registry.register(
             cls.strategy_name,
             cls,
@@ -241,7 +241,7 @@ class HorovodStrategy(ParallelStrategy):
         )
 
     def teardown(self) -> None:
-        # teardown may be called before `_exit_stack` is set
+        """Teardown may be called before `_exit_stack` is set."""
         if self._exit_stack:
             self._exit_stack.__exit__(None, None, None)
             self._exit_stack = None

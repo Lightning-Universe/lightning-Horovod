@@ -31,6 +31,7 @@ from torch import Tensor, optim
 from torchmetrics.classification.accuracy import Accuracy
 
 from pl_horovod import _HOROVOD_NCCL_AVAILABLE
+from tests.helper import BasicGAN, run_model_test_without_loggers
 
 if _HOROVOD_AVAILABLE:
     import horovod
@@ -167,9 +168,7 @@ def test_horovod_multi_gpu_accumulate_grad_batches(tmpdir):
 @pytest.mark.xfail(reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
 def test_horovod_raises_unsupported_accumulate_grad_batches(tmpdir):
-    """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs for Horovod Strategy
-    on multi-gpus.
-    """
+    """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs on multi-gpus."""
     model = BoringModel()
     with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
         trainer = Trainer(
@@ -269,7 +268,7 @@ def test_horovod_transfer_batch_to_gpu(tmpdir):
         "strategy": "horovod",
     }
     with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-        tpipes.run_model_test_without_loggers(trainer_options, model)
+        run_model_test_without_loggers(trainer_options, model)
 
 
 def test_horovod_multi_optimizer(tmpdir):
@@ -293,7 +292,7 @@ def test_horovod_multi_optimizer(tmpdir):
         assert hasattr(optimizer, "synchronize"), "optimizer has not been wrapped into DistributedOptimizer"
 
     def get_model_params(model):
-        return set(list(model.parameters()))
+        return set(model.parameters())
 
     def get_optimizer_params(optimizer):
         return {p for group in optimizer.param_groups for p in group.get("params", [])}
