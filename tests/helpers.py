@@ -28,8 +28,6 @@ from torch.utils.data import DataLoader
 from torchmetrics.functional import accuracy
 
 _PATH_TESTS_DIR = os.path.dirname(__file__)
-_PATH_DATA_DIR = os.path.join(_PATH_TESTS_DIR, "_data")
-os.makedirs(_PATH_DATA_DIR, exist_ok=True)
 
 
 class Generator(nn.Module):
@@ -167,7 +165,7 @@ class BasicGAN(LightningModule):
         return [opt_g, opt_d], []
 
     def train_dataloader(self):
-        return DataLoader(MNIST(root=_PATH_DATA_DIR, train=True, download=True), batch_size=16)
+        return DataLoader(MNIST(train=True, download=True), batch_size=16)
 
 
 @torch.no_grad()
