@@ -49,7 +49,6 @@ def test_multi_gpu(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -67,7 +66,6 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
         "accumulate_grad_batches": 2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -104,7 +102,6 @@ def test_multi_gpu_grad_by_value(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -123,7 +120,6 @@ def test_amp(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": HorovodStrategy(),
         "precision": 16,
     }
     _run_horovod(trainer_options)
@@ -143,7 +139,6 @@ def test_gather(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 

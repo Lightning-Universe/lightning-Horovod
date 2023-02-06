@@ -36,7 +36,6 @@ def test_simple(tmpdir):
         "max_epochs": 1,
         "limit_train_batches": 0.4,
         "limit_val_batches": 0.2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -49,7 +48,6 @@ def test_accumulate_grad_batches(tmpdir):
         "limit_train_batches": 4,
         "limit_val_batches": 0,
         "accumulate_grad_batches": 2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -64,7 +62,6 @@ def test_clip_grad_by_value(tmpdir):
         "max_epochs": 1,
         "limit_train_batches": 0.4,
         "limit_val_batches": 0.2,
-        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
