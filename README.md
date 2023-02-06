@@ -1,9 +1,9 @@
 # Lightning extension: Horovod
 
-[![CI testing](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-testing.yml)
-[![General checks](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-Devel/PL-Horovod/actions/workflows/ci-checks.yml)
+[![CI testing](https://github.com/Lightning-Sandbox/PL-Horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-Sandbox/PL-Horovod/actions/workflows/ci-testing.yml)
+[![General checks](https://github.com/Lightning-Sandbox/PL-Horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-Sandbox/PL-Horovod/actions/workflows/ci-checks.yml)
 [![Documentation Status](https://readthedocs.org/projects/PL-Horovod/badge/?version=latest)](https://PL-Horovod.readthedocs.io/en/latest/?badge=latest)
-[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-Devel/PL-Horovod/main.svg)](https://results.pre-commit.ci/latest/github/Lightning-Devel/PL-Horovod/main)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-Sandbox/PL-Horovod/main.svg)](https://results.pre-commit.ci/latest/github/Lightning-Sandbox/PL-Horovod/main)
 
 [Horovod](http://horovod.ai) allows the same training script to be used for single-GPU, multi-GPU, and multi-node training.
 
