@@ -1,6 +1,5 @@
 """Configure local testing."""
+from lightning_utilities import module_available
 
-from pl_horovod import _HOROVOD_AVAILABLE
-
-if not _HOROVOD_AVAILABLE:
+if not module_available("horovod"):
     raise ModuleNotFoundError("Horovod is not installed!")

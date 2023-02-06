@@ -11,10 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import contextlib
 from contextlib import ExitStack
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+import horovod.torch as hvd
 import pytorch_lightning as pl
 import torch
 import torch.nn as nn
@@ -22,7 +23,6 @@ from lightning_fabric.plugins import CheckpointIO
 from lightning_fabric.utilities.distributed import _distributed_available
 from lightning_fabric.utilities.distributed import group as dist_group
 from lightning_fabric.utilities.types import ReduceOp
-from lightning_utilities.core.imports import module_available
 from pytorch_lightning.core.optimizer import LightningOptimizer
 from pytorch_lightning.plugins.precision import PrecisionPlugin
 from pytorch_lightning.strategies.parallel import ParallelStrategy
@@ -32,9 +32,13 @@ from pytorch_lightning.utilities.rank_zero import rank_zero_only
 from torch import Tensor
 from torch.optim import Optimizer
 
-_HOROVOD_AVAILABLE = module_available("horovod.torch")
-if _HOROVOD_AVAILABLE:
-    import horovod.torch as hvd
+_HOROVOD_NCCL_AVAILABLE = False
+
+with contextlib.suppress(AttributeError):
+    # `nccl_built` returns an integer
+    _HOROVOD_NCCL_AVAILABLE = bool(hvd.nccl_built())
+    # AttributeError can be raised if MPI is not available:
+    # https://github.com/horovod/horovod/blob/v0.23.0/horovod/torch/__init__.py#L33-L34
 
 
 class HorovodStrategy(ParallelStrategy):
@@ -49,6 +53,7 @@ class HorovodStrategy(ParallelStrategy):
         checkpoint_io: Optional[CheckpointIO] = None,
         precision_plugin: Optional[PrecisionPlugin] = None,
     ):
+        hvd.init()
         super().__init__(
             accelerator=accelerator,
             parallel_devices=parallel_devices,

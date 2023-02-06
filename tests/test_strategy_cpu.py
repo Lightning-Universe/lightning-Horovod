@@ -15,19 +15,16 @@ import os
 import sys
 from unittest.mock import patch
 
+import horovod
+import horovod.torch as hvd
 import pytest
 import torch
 from pytorch_lightning import Trainer
 from pytorch_lightning.demos.boring_classes import BoringModel
-from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE
 from torch import optim
 
 from pl_horovod.strategy import HorovodStrategy
 from tests.helpers import BasicGAN, _run_horovod
-
-if _HOROVOD_AVAILABLE:
-    import horovod
-    import horovod.torch as hvd
 
 
 def test_simple(tmpdir):
@@ -39,7 +36,7 @@ def test_simple(tmpdir):
         "max_epochs": 1,
         "limit_train_batches": 0.4,
         "limit_val_batches": 0.2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -52,7 +49,7 @@ def test_accumulate_grad_batches(tmpdir):
         "limit_train_batches": 4,
         "limit_val_batches": 0,
         "accumulate_grad_batches": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -67,7 +64,7 @@ def test_clip_grad_by_value(tmpdir):
         "max_epochs": 1,
         "limit_train_batches": 0.4,
         "limit_val_batches": 0.2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import horovod
+import horovod.torch as hvd
 import numpy as np
 import pytest
 import torch
@@ -19,18 +21,12 @@ from lightning_utilities import module_available
 from pytorch_lightning import Trainer
 from pytorch_lightning.accelerators import CPUAccelerator
 from pytorch_lightning.demos.boring_classes import BoringModel
-from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
-from pl_horovod import _HOROVOD_NCCL_AVAILABLE
-from pl_horovod.strategy import HorovodStrategy
+from pl_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
 from tests.helpers import _run_horovod, run_model_test_without_loggers
-
-if _HOROVOD_AVAILABLE:
-    import horovod
-    import horovod.torch as hvd
 
 
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
@@ -53,7 +49,7 @@ def test_multi_gpu(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -71,7 +67,7 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
         "accumulate_grad_batches": 2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -108,7 +104,7 @@ def test_multi_gpu_grad_by_value(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -127,7 +123,7 @@ def test_amp(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
         "precision": 16,
     }
     _run_horovod(trainer_options)
@@ -147,7 +143,7 @@ def test_gather(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     _run_horovod(trainer_options)
 
@@ -175,7 +171,7 @@ def test_transfer_batch_to_gpu(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
     run_model_test_without_loggers(trainer_options, model)
 

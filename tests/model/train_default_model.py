@@ -23,6 +23,8 @@ import sys
 import torch
 
 # this is needed because Conda does not use `PYTHONPATH` env var while pip and virtualenv do
+from pl_horovod.strategy import HorovodStrategy
+
 PYTHONPATH = os.getenv("PYTHONPATH", "")
 if ":" in PYTHONPATH:
     sys.path = PYTHONPATH.split(":") + sys.path
@@ -97,7 +99,7 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
     trainer._checkpoint_connector.restore(checkpoint_path)
 
     if on_gpu:
-        trainer = Trainer(accelerator="gpu", devices=1, strategy="horovod", max_epochs=1)
+        trainer = Trainer(accelerator="gpu", devices=1, strategy=HorovodStrategy(), max_epochs=1)
         # test root gpu index
         assert trainer.strategy.root_device.index == hvd.local_rank()
 
