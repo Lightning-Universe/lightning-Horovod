@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader
 from torchmetrics.functional import accuracy
 
 _PATH_TESTS_DIR = os.path.dirname(__file__)
-_PATH_DATA_DIR = os.path.join(_PATH_TESTS_DIR, "_data")
+_PATH_DATA_DIR = os.path.join(_PATH_TESTS_DIR, "data")
 os.makedirs(_PATH_DATA_DIR, exist_ok=True)
 
 

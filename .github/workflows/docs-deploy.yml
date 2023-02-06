@@ -29,27 +29,23 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install . -q -U -r requirements.txt -r docs/requirements.txt \
+        pip --version
+        pip install -U -q -r requirements.txt -r docs/requirements.txt \
           -f https://download.pytorch.org/whl/cpu/torch_stable.html
         # install Texlive, see https://linuxconfig.org/how-to-install-latex-on-ubuntu-20-04-focal-fossa-linux
-        pip --version
         pip list
-      shell: bash
 
     - name: Make Documentation
       working-directory: ./docs
-      run: |
-        # First run the same pipeline as Read-The-Docs
-        make clean
-        make html --jobs 2
+      run: make html --jobs 2
 
     - name: Deploy 🚀
-      if: ${{ github.event_name == 'push' }}
       uses: JamesIves/github-pages-deploy-action@v4.4.1
+      if: ${{ github.event_name == 'push' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         branch: gh-pages # The branch the action should deploy to.
         folder: docs/build/html # The folder the action should deploy.
-        clean: true # Automatically remove deleted files from to deploy branch
+        clean: true # Automatically remove deleted files from the deploy branch
         target-folder: docs # If you'd like to push the contents of the deployment folder into a specific directory
         single-commit: true # you'd prefer to have a single commit on the deployment branch instead of full history

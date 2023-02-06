@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import horovod
+import horovod.torch as hvd
 import numpy as np
 import pytest
 import torch
@@ -19,17 +21,12 @@ from lightning_utilities import module_available
 from pytorch_lightning import Trainer
 from pytorch_lightning.accelerators import CPUAccelerator
 from pytorch_lightning.demos.boring_classes import BoringModel
-from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
-from pl_horovod import _HOROVOD_NCCL_AVAILABLE
+from pl_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
 from tests.helpers import _run_horovod, run_model_test_without_loggers
-
-if _HOROVOD_AVAILABLE:
-    import horovod
-    import horovod.torch as hvd
 
 
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
@@ -52,7 +49,6 @@ def test_multi_gpu(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
     }
     _run_horovod(trainer_options)
 
@@ -70,7 +66,6 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
         "accumulate_grad_batches": 2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
     }
     _run_horovod(trainer_options)
 
@@ -80,15 +75,14 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
 def test_raises_unsupported_accumulate_grad_batches(tmpdir):
     """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs on multi-gpus."""
     model = BoringModel()
-    with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-        trainer = Trainer(
-            default_root_dir=tmpdir,
-            enable_progress_bar=False,
-            accumulate_grad_batches={0: 4, 2: 2},
-            accelerator="auto",
-            devices=1,
-            strategy="horovod",
-        )
+    trainer = Trainer(
+        default_root_dir=tmpdir,
+        enable_progress_bar=False,
+        accumulate_grad_batches={0: 4, 2: 2},
+        accelerator="auto",
+        devices=1,
+        strategy=HorovodStrategy(),
+    )
     with pytest.raises(MisconfigurationException, match="Horovod.*does not support.*accumulate_grad_batches"):
         trainer.fit(model)
 
@@ -108,7 +102,6 @@ def test_multi_gpu_grad_by_value(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
     }
     _run_horovod(trainer_options)
 
@@ -127,7 +120,6 @@ def test_amp(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
         "precision": 16,
     }
     _run_horovod(trainer_options)
@@ -147,7 +139,6 @@ def test_gather(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
     }
     _run_horovod(trainer_options)
 
@@ -175,10 +166,9 @@ def test_transfer_batch_to_gpu(tmpdir):
         "limit_val_batches": 0.2,
         "accelerator": "gpu",
         "devices": 2,
-        "strategy": "horovod",
+        "strategy": HorovodStrategy(),
     }
-    with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-        run_model_test_without_loggers(trainer_options, model)
+    run_model_test_without_loggers(trainer_options, model)
 
 
 # todo: need to be fixed :]
@@ -201,8 +191,7 @@ def test_accuracy_metric_horovod():
     target = torch.randint(high=2, size=(num_batches, batch_size))
 
     def _compute_batch():
-        with pytest.deprecated_call(match=r"horovod'\)` has been deprecated in v1.9"):
-            trainer = Trainer(fast_dev_run=True, strategy="horovod", logger=False)
+        trainer = Trainer(fast_dev_run=True, strategy=HorovodStrategy(), logger=False)
 
         assert isinstance(trainer.accelerator, CPUAccelerator)
         # TODO: test that we selected the correct strategy based on horovod flags
