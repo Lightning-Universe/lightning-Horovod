@@ -36,13 +36,13 @@ about = _load_py_module("__about__.py")
 # the goal of the project is simplicity for researchers, don't want to add too much
 # engineer specific practices
 setup(
-    name="PL-Horovod",
+    name="lightning-Horovod",
     version=about.__version__,
     description=about.__docs__,
     author=about.__author__,
     author_email=about.__author_email__,
     url=about.__homepage__,
-    download_url="https://github.com/Lightning-Sandbox/PL-Horovod",
+    download_url="https://github.com/Lightning-AI/lightning-Horovod",
     license=about.__license__,
     packages=find_packages(where="src"),
     package_dir={"": "src"},
@@ -55,9 +55,9 @@ setup(
     setup_requires=["wheel"],
     install_requires=_load_requirements(_PATH_ROOT),
     project_urls={
-        "Bug Tracker": "https://github.com/Lightning-Sandbox/PL-Horovod/issues",
-        "Documentation": "https://PL-Horovod.rtfd.io/en/latest/",
-        "Source Code": "https://github.com/Lightning-Sandbox/PL-Horovod",
+        "Bug Tracker": "https://github.com/Lightning-AI/lightning-Horovod/issues",
+        "Documentation": "https://lightning-Horovod.rtfd.io/en/latest/",
+        "Source Code": "https://github.com/Lightning-AI/lightning-Horovod",
     },
     classifiers=[
         "Environment :: Console",

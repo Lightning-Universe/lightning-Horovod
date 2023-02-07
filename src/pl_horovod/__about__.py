@@ -3,7 +3,7 @@ __author__ = "Lightning-AI et al."
 __author_email__ = "name@lightning.ai"
 __license__ = "Apache-2.0"
 __copyright__ = f"Copyright (c) 2021-2023, {__author__}."
-__homepage__ = "https://github.com/Lightning-Sandbox/PL-Horovod"
+__homepage__ = "https://github.com/Lightning-AI/lightning-Horovod"
 __docs__ = "PyTorch Lightning Strategy for Horovod."
 
 __all__ = [
