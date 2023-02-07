@@ -7,7 +7,7 @@ command-line tool:
 
 .. code-block:: bash
 
-    horovodrun -np 2 python train_default_model.py ...
+horovodrun -np 2 python train_default_model.py ...
 
 Individual test parameters are configured by the serialized `--trainer-options` JSON object.
 
