@@ -12,8 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import horovod
-import horovod.torch as hvd
+import horovod.torch as hvd_torch
 import numpy as np
 import pytest
 import torch
@@ -22,11 +21,15 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.accelerators import CPUAccelerator
 from pytorch_lightning.demos.boring_classes import BoringModel
 from pytorch_lightning.utilities.exceptions import MisconfigurationException
+from sklearn.metrics import accuracy_score
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
 from lightning_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
 from tests.helpers import _run_horovod, run_model_test_without_loggers
+
+if torch.cuda.is_available():
+    assert _HOROVOD_NCCL_AVAILABLE, "for GPU tests we shall use Horovod with NCCL support..."
 
 
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
@@ -70,7 +73,6 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
 def test_raises_unsupported_accumulate_grad_batches(tmpdir):
     """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs on multi-gpus."""
@@ -143,7 +145,6 @@ def test_gather(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_transfer_batch_to_gpu(tmpdir):
@@ -171,12 +172,11 @@ def test_transfer_batch_to_gpu(tmpdir):
     run_model_test_without_loggers(trainer_options, model)
 
 
-# todo: need to be fixed :]
-@pytest.mark.skip(reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
+@pytest.mark.xfail(raises=RuntimeError, reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not module_available("sklearn"), reason="This tests scikit-learn accuracy.")
 def test_accuracy_metric_horovod():
-    from sklearn.metrics import accuracy_score
+    import horovod
 
     num_batches = 10
     batch_size = 16
@@ -203,11 +203,11 @@ def test_accuracy_metric_horovod():
             threshold=threshold,
         )
 
-        for i in range(hvd.rank(), num_batches, hvd.size()):
+        for i in range(hvd_torch.rank(), num_batches, hvd_torch.size()):
             batch_result = metric(preds[i], target[i])
-            if hvd.rank() == 0:
-                dist_preds = torch.stack([preds[i + r] for r in range(hvd.size())])
-                dist_target = torch.stack([target[i + r] for r in range(hvd.size())])
+            if hvd_torch.rank() == 0:
+                dist_preds = torch.stack([preds[i + r] for r in range(hvd_torch.size())])
+                dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
                 sk_batch_result = sk_metric(dist_preds, dist_target)
                 assert np.allclose(batch_result.numpy(), sk_batch_result)
 
