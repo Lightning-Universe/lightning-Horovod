@@ -23,7 +23,7 @@ from pytorch_lightning import Trainer
 from pytorch_lightning.demos.boring_classes import BoringModel
 from torch import optim
 
-from pl_horovod.strategy import HorovodStrategy
+from lightning_horovod.strategy import HorovodStrategy
 from tests.helpers import BasicGAN, _run_horovod
 
 
