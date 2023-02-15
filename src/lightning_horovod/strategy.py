@@ -18,12 +18,12 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import horovod.torch as hvd
 import torch
 import torch.nn as nn
-from lightning.pytorch import Trainer
-from lightning.pytorch.accelerators import Accelerator
 from lightning_fabric.plugins import CheckpointIO
 from lightning_fabric.utilities.distributed import _distributed_available
 from lightning_fabric.utilities.distributed import group as dist_group
 from lightning_fabric.utilities.types import ReduceOp
+from pytorch_lightning import Trainer
+from pytorch_lightning.accelerators import Accelerator
 from pytorch_lightning.core.optimizer import LightningOptimizer
 from pytorch_lightning.plugins.precision import PrecisionPlugin
 from pytorch_lightning.strategies.parallel import ParallelStrategy
