@@ -16,9 +16,10 @@ from contextlib import ExitStack
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import horovod.torch as hvd
-import pytorch_lightning as pl
 import torch
 import torch.nn as nn
+from lightning.pytorch import Trainer
+from lightning.pytorch.accelerators import Accelerator
 from lightning_fabric.plugins import CheckpointIO
 from lightning_fabric.utilities.distributed import _distributed_available
 from lightning_fabric.utilities.distributed import group as dist_group
@@ -48,7 +49,7 @@ class HorovodStrategy(ParallelStrategy):
 
     def __init__(
         self,
-        accelerator: Optional["pl.accelerators.Accelerator"] = None,
+        accelerator: Optional[Accelerator] = None,
         parallel_devices: Optional[List[torch.device]] = None,
         checkpoint_io: Optional[CheckpointIO] = None,
         precision_plugin: Optional[PrecisionPlugin] = None,
@@ -90,7 +91,7 @@ class HorovodStrategy(ParallelStrategy):
         """Whether the plugin handles gradient accumulation internally."""
         return True
 
-    def setup(self, trainer: "pl.Trainer") -> None:
+    def setup(self, trainer: Trainer) -> None:
         self.model_to_device()
 
         super().setup(trainer)
