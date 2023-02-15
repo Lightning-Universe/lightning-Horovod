@@ -38,7 +38,7 @@ def test_nccl_is_available_on_gpu_environment():
     assert _HOROVOD_NCCL_AVAILABLE
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
+# @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_multi_gpu(tmpdir):
@@ -56,7 +56,7 @@ def test_multi_gpu(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
+# @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_multi_gpu_accumulate_grad_batches(tmpdir):
@@ -73,7 +73,7 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(reason="unhandled cuda error")
+# @pytest.mark.xfail(reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
 def test_raises_unsupported_accumulate_grad_batches(tmpdir):
     """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs on multi-gpus."""
@@ -90,7 +90,7 @@ def test_raises_unsupported_accumulate_grad_batches(tmpdir):
         trainer.fit(model)
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
+# @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_multi_gpu_grad_by_value(tmpdir):
@@ -109,7 +109,7 @@ def test_multi_gpu_grad_by_value(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
+# @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_amp(tmpdir):
@@ -128,7 +128,7 @@ def test_amp(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
+# @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_gather(tmpdir):
@@ -146,7 +146,7 @@ def test_gather(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.xfail(reason="unhandled cuda error")
+# @pytest.mark.xfail(reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_transfer_batch_to_gpu(tmpdir):
@@ -175,7 +175,7 @@ def test_transfer_batch_to_gpu(tmpdir):
 
 
 # todo: need to be fixed :]
-@pytest.mark.skip(reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
+# @pytest.mark.skip(reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not module_available("sklearn"), reason="This tests scikit-learn accuracy.")
 def test_accuracy_metric_horovod():
