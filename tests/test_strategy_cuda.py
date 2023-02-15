@@ -25,7 +25,7 @@ from sklearn.metrics import accuracy_score
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
-from pl_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
+from lightning_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
 from tests.helpers import _run_horovod, run_model_test_without_loggers
 
 if torch.cuda.is_available():

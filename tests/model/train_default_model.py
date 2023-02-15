@@ -23,7 +23,7 @@ import sys
 import torch
 
 # this is needed because Conda does not use `PYTHONPATH` env var while pip and virtualenv do
-from pl_horovod.strategy import HorovodStrategy
+from lightning_horovod.strategy import HorovodStrategy
 
 PYTHONPATH = os.getenv("PYTHONPATH", "")
 if ":" in PYTHONPATH:
