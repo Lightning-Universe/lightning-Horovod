@@ -64,6 +64,7 @@ class HorovodStrategy(ParallelStrategy):
     """Plugin for Horovod distributed training integration."""
 
     strategy_name = "horovod"
+    optimizers: List[Optimizer]
 
     def __init__(
         self,
