@@ -87,6 +87,9 @@ def test_implicit(tmpdir):
     _run_horovod(trainer_options)
 
 
+@pytest.mark.xfail(
+    raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
+)
 def test_multi_optimizer(tmpdir):
     model = BasicGAN()
 
@@ -165,6 +168,9 @@ def test_result_reduce_horovod(tmpdir):
     horovod.run(hvd_test_fn, np=2)
 
 
+@pytest.mark.xfail(
+    raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
+)
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
         def training_step(self, batch, batch_idx, optimizer_idx):
