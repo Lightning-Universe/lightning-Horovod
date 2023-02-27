@@ -168,7 +168,10 @@ def test_result_reduce_horovod(tmpdir):
     horovod.run(hvd_test_fn, np=2)
 
 
-@pytest.mark.xfail(raises=TypeError, reason="list indices must be integers or slices, not str")
+@pytest.mark.xfail(  # for PL
+    raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
+)
+@pytest.mark.xfail(raises=TypeError, reason="list indices must be integers or slices, not str")  # for LAi
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
         def training_step(self, batch, batch_idx, optimizer_idx):
