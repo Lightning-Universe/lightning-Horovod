@@ -60,9 +60,10 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
             expected_device = torch.device("cuda", self.trainer.local_rank) if on_gpu else torch.device("cpu")
             assert self.device == expected_device
 
-        def training_epoch_end(self, outputs) -> None:
-            res = self.trainer.strategy.reduce(torch.tensor(1.0, device=self.device), reduce_op="sum")
-            assert res.sum() == self.trainer.strategy.world_size
+        # ToDo: find alternative for this check
+        # def training_epoch_end(self, outputs) -> None:
+        #     res = self.trainer.strategy.reduce(torch.tensor(1.0, device=self.device), reduce_op="sum")
+        #     assert res.sum() == self.trainer.strategy.world_size
 
     model = TestModel()
     trainer = Trainer(**trainer_options)

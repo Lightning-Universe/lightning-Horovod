@@ -143,8 +143,9 @@ def test_result_reduce_horovod(tmpdir):
                     res["test_tensor"].item() == hvd.size()
                 ), "Result-Log does not work properly with Horovod and Tensors"
 
-            def training_epoch_end(self, outputs) -> None:
-                assert len(outputs) == 0
+            # ToDo: find alternative for this check
+            # def training_epoch_end(self, outputs) -> None:
+            #     assert len(outputs) == 0
 
         model = TestModel()
         model.val_dataloader = None
@@ -177,7 +178,6 @@ def test_multi_optimizer_with_scheduling_stepping(tmpdir):
             return [optimizer1, optimizer2], [lr_scheduler1, lr_scheduler2]
 
     model = TestModel()
-    model.training_epoch_end = None
 
     num_workers = 8
     init_lr = 0.1 * num_workers
