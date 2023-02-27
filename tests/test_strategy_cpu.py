@@ -19,9 +19,17 @@ import horovod
 import horovod.torch as hvd
 import pytest
 import torch
-from pytorch_lightning import Trainer
-from pytorch_lightning.demos.boring_classes import BoringModel
-from torch import optim
+from lightning_utilities import module_available
+
+if module_available("lightning"):
+    from lightning.pytorch.demos.boring_classes import BoringModel
+    from lightning.pytorch import Trainer  # noqa: E402
+elif module_available("pytorch_lightning"):
+    from pytorch_lightning.demos.boring_classes import BoringModel
+    from pytorch_lightning import Trainer  # noqa: E402
+else:
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
+
 
 from lightning_horovod.strategy import HorovodStrategy
 from tests.helpers import BasicGAN, _run_horovod

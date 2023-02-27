@@ -21,24 +21,29 @@ import os
 import sys
 
 import torch
+from lightning_utilities import module_available
 
 # this is needed because Conda does not use `PYTHONPATH` env var while pip and virtualenv do
 from lightning_horovod.strategy import HorovodStrategy
+
+import horovod.torch as hvd
 
 PYTHONPATH = os.getenv("PYTHONPATH", "")
 if ":" in PYTHONPATH:
     sys.path = PYTHONPATH.split(":") + sys.path
 
-from pytorch_lightning import Trainer  # noqa: E402
-from pytorch_lightning.callbacks import ModelCheckpoint  # noqa: E402
-from pytorch_lightning.strategies.horovod import _HOROVOD_AVAILABLE  # noqa: E402
 
-if _HOROVOD_AVAILABLE:
-    import horovod.torch as hvd
+if module_available("lightning"):
+    from lightning.pytorch import Trainer  # noqa: E402
+    from lightning.pytorch.callbacks import ModelCheckpoint  # noqa: E402
+    from lightning.pytorch.demos.boring_classes import BoringModel  # noqa: E402
+elif module_available("pytorch_lightning"):
+    from pytorch_lightning import Trainer  # noqa: E402
+    from pytorch_lightning.callbacks import ModelCheckpoint  # noqa: E402
+    from pytorch_lightning.demos.boring_classes import BoringModel  # noqa: E402
 else:
-    print("You requested to import Horovod which is missing or not supported for your OS.")
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
-from pytorch_lightning.demos.boring_classes import BoringModel  # noqa: E402
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--trainer-options", required=True)

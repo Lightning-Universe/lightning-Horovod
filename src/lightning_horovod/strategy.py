@@ -18,20 +18,39 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import horovod.torch as hvd
 import torch
 import torch.nn as nn
-from lightning_fabric.plugins import CheckpointIO
-from lightning_fabric.utilities.distributed import _distributed_available
-from lightning_fabric.utilities.distributed import group as dist_group
-from lightning_fabric.utilities.types import ReduceOp
-from pytorch_lightning import Trainer
-from pytorch_lightning.accelerators import Accelerator
-from pytorch_lightning.core.optimizer import LightningOptimizer
-from pytorch_lightning.plugins.precision import PrecisionPlugin
-from pytorch_lightning.strategies.parallel import ParallelStrategy
-from pytorch_lightning.strategies.strategy import TBroadcast
-from pytorch_lightning.utilities.exceptions import MisconfigurationException
-from pytorch_lightning.utilities.rank_zero import rank_zero_only
+from lightning_utilities import module_available
 from torch import Tensor
 from torch.optim import Optimizer
+
+
+if module_available("lightning"):
+    from lightning.fabric.plugins import CheckpointIO
+    from lightning.fabric.utilities.distributed import _distributed_available
+    from lightning.fabric.utilities.distributed import group as dist_group
+    from lightning.fabric.utilities.types import ReduceOp
+    from lightning.pytorch import Trainer
+    from lightning.pytorch.accelerators import Accelerator
+    from lightning.pytorch.core.optimizer import LightningOptimizer
+    from lightning.pytorch.plugins.precision import PrecisionPlugin
+    from lightning.pytorch.strategies.parallel import ParallelStrategy
+    from lightning.pytorch.strategies.strategy import TBroadcast
+    from lightning.pytorch.utilities.exceptions import MisconfigurationException
+    from lightning.pytorch.utilities.rank_zero import rank_zero_only
+elif module_available("pytorch_lightning") and module_available("lightning_fabric"):
+    from lightning_fabric.plugins import CheckpointIO
+    from lightning_fabric.utilities.distributed import _distributed_available
+    from lightning_fabric.utilities.distributed import group as dist_group
+    from lightning_fabric.utilities.types import ReduceOp
+    from pytorch_lightning import Trainer
+    from pytorch_lightning.accelerators import Accelerator
+    from pytorch_lightning.core.optimizer import LightningOptimizer
+    from pytorch_lightning.plugins.precision import PrecisionPlugin
+    from pytorch_lightning.strategies.parallel import ParallelStrategy
+    from pytorch_lightning.strategies.strategy import TBroadcast
+    from pytorch_lightning.utilities.exceptions import MisconfigurationException
+    from pytorch_lightning.utilities.rank_zero import rank_zero_only
+else:
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
 _HOROVOD_NCCL_AVAILABLE = False
 
