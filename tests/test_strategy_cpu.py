@@ -22,11 +22,11 @@ import torch
 from lightning_utilities import module_available
 
 if module_available("lightning"):
+    from lightning.pytorch import Trainer
     from lightning.pytorch.demos.boring_classes import BoringModel
-    from lightning.pytorch import Trainer  # noqa: E402
 elif module_available("pytorch_lightning"):
+    from pytorch_lightning import Trainer
     from pytorch_lightning.demos.boring_classes import BoringModel
-    from pytorch_lightning import Trainer  # noqa: E402
 else:
     raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
@@ -170,10 +170,10 @@ def test_multi_optimizer_with_scheduling_stepping(tmpdir):
             return super().training_step(batch, batch_idx)
 
         def configure_optimizers(self):
-            optimizer1 = optim.Adam(self.parameters(), lr=0.1)
-            optimizer2 = optim.Adam(self.parameters(), lr=0.1)
-            lr_scheduler1 = optim.lr_scheduler.StepLR(optimizer1, 1, gamma=0.1)
-            lr_scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 1, gamma=0.1)
+            optimizer1 = torch.optim.Adam(self.parameters(), lr=0.1)
+            optimizer2 = torch.optim.Adam(self.parameters(), lr=0.1)
+            lr_scheduler1 = torch.optim.lr_scheduler.StepLR(optimizer1, 1, gamma=0.1)
+            lr_scheduler2 = torch.optim.lr_scheduler.StepLR(optimizer2, 1, gamma=0.1)
             return [optimizer1, optimizer2], [lr_scheduler1, lr_scheduler2]
 
     model = TestModel()

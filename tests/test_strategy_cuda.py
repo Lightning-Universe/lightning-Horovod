@@ -17,7 +17,6 @@ import numpy as np
 import pytest
 import torch
 from lightning_utilities import module_available
-
 from sklearn.metrics import accuracy_score
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy

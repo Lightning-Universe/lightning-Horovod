@@ -22,7 +22,6 @@ from lightning_utilities import module_available
 from torch import Tensor
 from torch.optim import Optimizer
 
-
 if module_available("lightning"):
     from lightning.fabric.plugins import CheckpointIO
     from lightning.fabric.utilities.distributed import _distributed_available
