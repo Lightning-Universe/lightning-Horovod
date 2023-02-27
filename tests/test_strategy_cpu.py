@@ -171,7 +171,7 @@ def test_result_reduce_horovod(tmpdir):
 @pytest.mark.xfail(
     raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
 )
-@pytest.mark.skipif(not module_available("pytorch_lightning"))  # todo, failing with TypeError on lightning? :/
+@pytest.mark.skipif(not module_available("pytorch_lightning"), reason="failing with TypeError on lightning?")  # todo
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
         def training_step(self, batch, batch_idx, optimizer_idx):
