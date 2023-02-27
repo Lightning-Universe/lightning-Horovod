@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import operator
 import os
 import sys
 from unittest.mock import patch
@@ -19,7 +20,7 @@ import horovod
 import horovod.torch as hvd
 import pytest
 import torch
-from lightning_utilities import module_available
+from lightning_utilities import compare_version, module_available
 
 if module_available("lightning"):
     from lightning.pytorch import Trainer
@@ -171,7 +172,10 @@ def test_result_reduce_horovod(tmpdir):
 @pytest.mark.xfail(
     raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
 )
-@pytest.mark.skipif(not module_available("pytorch_lightning"), reason="failing with TypeError on lightning?")  # todo
+@pytest.mark.skipif(
+    compare_version("lightning", operator.lt, "2.0.0") or compare_version("pytorch_lightning", operator.lt, "2.0.0"),
+    reason="failing with TypeError",
+)
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
         def training_step(self, batch, batch_idx, optimizer_idx):
