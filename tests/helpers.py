@@ -20,12 +20,21 @@ import sys
 import numpy as np
 import torch
 import torch.nn.functional as F  # noqa: N812
-from pytorch_lightning import LightningDataModule, LightningModule, Trainer
-from pytorch_lightning.demos.boring_classes import BoringModel
-from pytorch_lightning.demos.mnist_datamodule import MNIST
+from lightning_utilities import module_available
 from torch import nn
 from torch.utils.data import DataLoader
 from torchmetrics.functional import accuracy
+
+if module_available("lightning"):
+    from lightning.pytorch import LightningDataModule, LightningModule, Trainer
+    from lightning.pytorch.demos.boring_classes import BoringModel
+    from lightning.pytorch.demos.mnist_datamodule import MNIST
+elif module_available("pytorch_lightning"):
+    from pytorch_lightning import LightningDataModule, LightningModule, Trainer
+    from pytorch_lightning.demos.boring_classes import BoringModel
+    from pytorch_lightning.demos.mnist_datamodule import MNIST
+else:
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
 _PATH_TESTS_DIR = os.path.dirname(__file__)
 _PATH_DATA_DIR = os.path.join(_PATH_TESTS_DIR, "data")

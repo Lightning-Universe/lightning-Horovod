@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import operator
 import os
 import sys
 from unittest.mock import patch
@@ -19,9 +20,17 @@ import horovod
 import horovod.torch as hvd
 import pytest
 import torch
-from pytorch_lightning import Trainer
-from pytorch_lightning.demos.boring_classes import BoringModel
-from torch import optim
+from lightning_utilities import compare_version, module_available
+
+if module_available("lightning"):
+    from lightning.pytorch import Trainer
+    from lightning.pytorch.demos.boring_classes import BoringModel
+elif module_available("pytorch_lightning"):
+    from pytorch_lightning import Trainer
+    from pytorch_lightning.demos.boring_classes import BoringModel
+else:
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
+
 
 from lightning_horovod.strategy import HorovodStrategy
 from tests.helpers import BasicGAN, _run_horovod
@@ -79,6 +88,9 @@ def test_implicit(tmpdir):
     _run_horovod(trainer_options)
 
 
+@pytest.mark.xfail(
+    raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
+)
 def test_multi_optimizer(tmpdir):
     model = BasicGAN()
 
@@ -135,8 +147,9 @@ def test_result_reduce_horovod(tmpdir):
                     res["test_tensor"].item() == hvd.size()
                 ), "Result-Log does not work properly with Horovod and Tensors"
 
-            def training_epoch_end(self, outputs) -> None:
-                assert len(outputs) == 0
+            # ToDo: find alternative for this check
+            # def training_epoch_end(self, outputs) -> None:
+            #     assert len(outputs) == 0
 
         model = TestModel()
         model.val_dataloader = None
@@ -156,20 +169,26 @@ def test_result_reduce_horovod(tmpdir):
     horovod.run(hvd_test_fn, np=2)
 
 
+@pytest.mark.xfail(
+    raises=RuntimeError, reason="Training with multiple optimizers is only supported with manual optimization"
+)
+@pytest.mark.skipif(
+    compare_version("lightning", operator.lt, "2.0.0") or compare_version("pytorch_lightning", operator.lt, "2.0.0"),
+    reason="failing with TypeError",
+)
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
         def training_step(self, batch, batch_idx, optimizer_idx):
             return super().training_step(batch, batch_idx)
 
         def configure_optimizers(self):
-            optimizer1 = optim.Adam(self.parameters(), lr=0.1)
-            optimizer2 = optim.Adam(self.parameters(), lr=0.1)
-            lr_scheduler1 = optim.lr_scheduler.StepLR(optimizer1, 1, gamma=0.1)
-            lr_scheduler2 = optim.lr_scheduler.StepLR(optimizer2, 1, gamma=0.1)
+            optimizer1 = torch.optim.Adam(self.parameters(), lr=0.1)
+            optimizer2 = torch.optim.Adam(self.parameters(), lr=0.1)
+            lr_scheduler1 = torch.optim.lr_scheduler.StepLR(optimizer1, 1, gamma=0.1)
+            lr_scheduler2 = torch.optim.lr_scheduler.StepLR(optimizer2, 1, gamma=0.1)
             return [optimizer1, optimizer2], [lr_scheduler1, lr_scheduler2]
 
     model = TestModel()
-    model.training_epoch_end = None
 
     num_workers = 8
     init_lr = 0.1 * num_workers

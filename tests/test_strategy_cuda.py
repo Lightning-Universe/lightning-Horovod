@@ -17,16 +17,25 @@ import numpy as np
 import pytest
 import torch
 from lightning_utilities import module_available
-from pytorch_lightning import Trainer
-from pytorch_lightning.accelerators import CPUAccelerator
-from pytorch_lightning.demos.boring_classes import BoringModel
-from pytorch_lightning.utilities.exceptions import MisconfigurationException
 from sklearn.metrics import accuracy_score
 from torch import Tensor
 from torchmetrics.classification.accuracy import Accuracy
 
 from lightning_horovod.strategy import _HOROVOD_NCCL_AVAILABLE, HorovodStrategy
 from tests.helpers import _run_horovod, run_model_test_without_loggers
+
+if module_available("lightning"):
+    from lightning.pytorch import Trainer
+    from lightning.pytorch.accelerators import CPUAccelerator
+    from lightning.pytorch.demos.boring_classes import BoringModel
+    from lightning.pytorch.utilities.exceptions import MisconfigurationException
+elif module_available("pytorch_lightning"):
+    from pytorch_lightning import Trainer
+    from pytorch_lightning.accelerators import CPUAccelerator
+    from pytorch_lightning.demos.boring_classes import BoringModel
+    from pytorch_lightning.utilities.exceptions import MisconfigurationException
+else:
+    raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
 if torch.cuda.is_available():
     assert _HOROVOD_NCCL_AVAILABLE, "for GPU tests we shall use Horovod with NCCL support..."
