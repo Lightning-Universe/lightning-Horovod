@@ -111,7 +111,7 @@ ignore-init-module-imports = true
 "__about__.py" = ["D100"]
 "__init__.py" = ["D100"]
 "src/**" = ["D100", "D102", "D107"]  # TODO: fix all of these
-"tests/**" = ["D100", "D101", "D102", "D103", "D107"]
+"tests/**" = ["D100", "D101", "D102", "D103", "D104", "D107"]
 
 [tool.ruff.pydocstyle]
 # Use Google-style docstrings.

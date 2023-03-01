@@ -18,7 +18,7 @@ Horovod can be configured in the training script to run with any number of GPUs 
 trainer = Trainer(strategy="horovod", accelerator="gpu", devices=1)
 
 # train Horovod on CPU (number of processes / machines provided on command-line)
-trainer = Trainer(strategy="horovod")
+trainer = Trainer(strategy=HorovodStrategy())
 ```
 
 When starting the training job, the driver application will then be used to specify the total number of worker processes:
@@ -32,9 +32,3 @@ horovodrun -np 8 -H hostname1:4,hostname2:4 python train.py
 ```
 
 See the official [Horovod documentation](https://horovod.readthedocs.io/en/stable) for details on installation and performance tuning.
-
-## Tests / Docs notes
-
-- We are using [Napoleon style,](https://www.sphinx-doc.org/en/master/usage/extensions/napoleon.html) and we shall use static types...
-- It is nice to se [doctest](https://docs.python.org/3/library/doctest.html) as they are also generated as examples in documentation
-- For wider and edge cases testing use [pytest parametrization](https://docs.pytest.org/en/stable/parametrize.html) :\]
