@@ -1,5 +1,6 @@
 # Lightning extension: Horovod
 
+[![lightning](https://img.shields.io/badge/-Lightning_2.0+-792ee5?logo=pytorchlightning&logoColor=white)](https://lightning.ai/)
 [![PyPI Status](https://badge.fury.io/py/lightning-horovod.svg)](https://badge.fury.io/py/lightning-horovod)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/lightning-horovod)](https://pypi.org/project/lightning-horovod/)
 [![PyPI Status](https://pepy.tech/badge/lightning-horovod)](https://pepy.tech/project/lightning-horovod)
@@ -7,7 +8,7 @@
 
 [![General checks](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-checks.yml)
 [![CI testing](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-testing.yml)
-[![Build Status](https://dev.azure.com/Lightning-AI/compatibility/_apis/build/status/Lightning-AI.lightning-Horovod?branchName=main)](https://dev.azure.com/Lightning-AI/compatibility/_build/latest?definitionId=42&branchName=main)
+[![Build Status](https://dev.azure.com/Lightning-AI/compatibility/_apis/build/status/Lightning-AI.lightning-Horovod?branchName=main)](https://dev.azure.com/Lightning-AI/compatibility/_build/latest?definitionId=44&branchName=main)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-AI/lightning-Horovod/main.svg)](https://results.pre-commit.ci/latest/github/Lightning-AI/lightning-Horovod/main)
 
 [Horovod](http://horovod.ai) allows the same training script to be used for single-GPU, multi-GPU, and multi-node training.
