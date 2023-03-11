@@ -1,8 +1,13 @@
 # Lightning extension: Horovod
 
-[![CI testing](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/ci-testing.yml)
-[![General checks](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/ci-checks.yml)
-[![Documentation Status](https://readthedocs.org/projects/lightning-Horovod/badge/?version=latest)](https://lightning-Horovod.readthedocs.io/en/latest/?badge=latest)
+[![PyPI Status](https://badge.fury.io/py/lightning-horovod.svg)](https://badge.fury.io/py/lightning-horovod)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/lightning-horovod)](https://pypi.org/project/lightning-horovod/)
+[![PyPI Status](https://pepy.tech/badge/lightning-horovod)](https://pepy.tech/project/lightning-horovod)
+[![Deploy Docs](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/docs-deploy.yml/badge.svg)](https://lightning-ai.github.io/lightning-Horovod/)
+
+[![General checks](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-checks.yml)
+[![CI testing](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-testing.yml/badge.svg?event=push)](https://github.com/Lightning-AI/lightning-horovod/actions/workflows/ci-testing.yml)
+[![Build Status](https://dev.azure.com/Lightning-AI/compatibility/_apis/build/status/Lightning-AI.lightning-Horovod?branchName=main)](https://dev.azure.com/Lightning-AI/compatibility/_build/latest?definitionId=42&branchName=main)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/Lightning-AI/lightning-Horovod/main.svg)](https://results.pre-commit.ci/latest/github/Lightning-AI/lightning-Horovod/main)
 
 [Horovod](http://horovod.ai) allows the same training script to be used for single-GPU, multi-GPU, and multi-node training.
@@ -14,6 +19,9 @@ The number of worker processes is configured by a driver application (`horovodru
 Horovod can be configured in the training script to run with any number of GPUs / processes as follows:
 
 ```py
+from lightning import Trainer
+from lightning_horovod import HorovodStrategy
+
 # train Horovod on GPU (number of GPUs / machines provided on command-line)
 trainer = Trainer(strategy="horovod", accelerator="gpu", devices=1)
 
