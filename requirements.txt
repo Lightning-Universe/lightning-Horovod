@@ -1,4 +1,4 @@
 pytorch-lightning >=2.0.0
-packaging  # needed for horovod issue 
+packaging  # needed for horovod issue
 # no need to install with [pytorch] as pytorch is already installed
 horovod >0.24.0, <=0.27.0
