@@ -50,7 +50,7 @@ jobs:
 
     - name: Install package & dependencies
       run: |
-        pip install -U setuptools packaging  # HotFix for bad Horovod requirements
+        pip install "pip<23.0"  # HotFix for bad Horovod requirements
         pip install -e . -U -r tests/requirements.txt \
           --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
         pip list
