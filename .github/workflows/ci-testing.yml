@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-10.15]
+        os: [ubuntu-20.04, macOS-11]
         python-version: [3.8]
         requires: ['oldest', 'latest']
 
@@ -50,7 +50,7 @@ jobs:
 
     - name: Install package & dependencies
       run: |
-        pip --version
+        pip install packaging  # HotFix for bad Horovod requirements
         pip install -e . -U -r tests/requirements.txt \
           --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
         pip list
