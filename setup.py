@@ -52,7 +52,6 @@ setup(
     zip_safe=False,
     keywords=["deep learning", "pytorch", "AI"],
     python_requires=">=3.8",
-    setup_requires=["wheel"],
     install_requires=_load_requirements(_PATH_ROOT),
     project_urls={
         "Bug Tracker": "https://github.com/Lightning-AI/lightning-Horovod/issues",
