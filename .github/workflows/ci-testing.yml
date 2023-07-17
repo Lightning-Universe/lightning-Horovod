@@ -18,7 +18,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, macOS-10.15]
+        os: [ubuntu-20.04, macOS-11]
         python-version: [3.8]
         requires: ['oldest', 'latest']
 
@@ -50,7 +50,7 @@ jobs:
 
     - name: Install package & dependencies
       run: |
-        pip --version
+        pip install "pip<23.0"  # HotFix for bad Horovod requirements
         pip install -e . -U -r tests/requirements.txt \
           --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
         pip list
@@ -71,7 +71,7 @@ jobs:
     - name: Testing
       env:
         PL_USE_MOCKED_MNIST: 1
-      run: coverage run --source lightning_horovod -m pytest src tests -v
+      run: pytest src/ tests/ --cov=lightning_horovod -v
 
     - name: Statistics
       run: |
