@@ -140,8 +140,6 @@ def test_gather(tmpdir):
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
 def test_transfer_batch_to_gpu(tmpdir):
     class TestTrainingStepModel(BoringModel):
-        automatic_optimization: bool = False
-
         def training_step(self, batch, *args, **kwargs):
             assert str(batch.device) != "cpu"
             return super().training_step(batch, *args, **kwargs)

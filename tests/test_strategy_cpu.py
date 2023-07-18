@@ -140,8 +140,6 @@ def test_result_reduce_horovod(tmpdir):
         hvd.init()
 
         class TestModel(BoringModel):
-            automatic_optimization: bool = False
-
             def training_step(self, batch, batch_idx):
                 self.training_step_called = True
 
@@ -188,8 +186,6 @@ def test_result_reduce_horovod(tmpdir):
 )
 def test_multi_optimizer_with_scheduling_stepping(tmpdir):
     class TestModel(BoringModel):
-        automatic_optimization: bool = False
-
         def training_step(self, batch, batch_idx, optimizer_idx):
             return super().training_step(batch, batch_idx)
 

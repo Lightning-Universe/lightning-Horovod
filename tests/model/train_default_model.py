@@ -56,8 +56,6 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
     trainer_options.update(callbacks=[ModelCheckpoint(dirpath=ckpt_path)])
 
     class TestModel(BoringModel):
-        automatic_optimization: bool = False
-
         def on_train_start(self) -> None:
             expected_device = torch.device("cuda", self.trainer.local_rank) if on_gpu else torch.device("cpu")
             assert self.device == expected_device, f"{self.device} is not expected {expected_device}"
