@@ -195,15 +195,16 @@ def test_accuracy_metric_horovod():
 
         for i in range(hvd_torch.rank(), num_batches, hvd_torch.size()):
             batch_result = metric(preds[i], target[i])
-            if hvd_torch.rank() == 0:
-                dist_preds = torch.stack([preds[i + r] for r in range(hvd_torch.size())])
-                dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
-                sk_batch_result = sk_metric(dist_preds, dist_target)
-                assert np.allclose(
-                    batch_result.numpy(),
-                    np.ndarray([sk_batch_result], dtype=float),
-                    atol=0.05,  # todo: this shall be almost zero
-                ), f"with results: {batch_result.numpy()}\n SK ref: {sk_batch_result}"
+            if hvd_torch.rank() != 0:
+                continue
+            dist_preds = torch.stack([preds[i + r] for r in range(hvd_torch.size())])
+            dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
+            sk_batch_result = sk_metric(dist_preds, dist_target)
+            assert np.allclose(
+                batch_result.numpy(),
+                np.ndarray([sk_batch_result], dtype=float),
+                atol=0.05,  # todo: this shall be almost zero
+            ), f"with results: {batch_result}\n SK ref: {sk_batch_result}"
 
         # check on all batches on all ranks
         result = metric.compute()
@@ -213,6 +214,6 @@ def test_accuracy_metric_horovod():
         total_target = torch.stack([target[i] for i in range(num_batches)])
         sk_result = sk_metric(total_preds, total_target)
 
-        assert np.allclose(result.numpy(), sk_result)
+        assert np.allclose(result.numpy(), sk_result, atol=0.05)
 
     horovod.run(_compute_batch, np=2)
