@@ -147,9 +147,12 @@ def test_result_reduce_horovod(tmpdir):
                 res = self.trainer._results
 
                 # Check that `tensor` is summed across all ranks automatically
-                assert (
-                    res["test_tensor"].item() == hvd.size()
-                ), "Result-Log does not work properly with Horovod and Tensors"
+                try:  # todo
+                    assert (
+                        res["test_tensor"].item() == hvd.size()
+                    ), "Result-Log does not work properly with Horovod and Tensors"
+                except KeyError as err:
+                    raise KeyError(f"{res}") from err
 
             # ToDo: find alternative for this check
             # def training_epoch_end(self, outputs) -> None:
