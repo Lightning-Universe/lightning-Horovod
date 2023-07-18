@@ -39,6 +39,7 @@ from tests.helpers import BasicGAN, _run_horovod
 def test_simple(tmpdir):
     """Test Horovod running multi-process on CPU."""
     trainer_options = {
+        "accelerator": "cpu",
         "default_root_dir": str(tmpdir),
         "gradient_clip_val": 1.0,
         "enable_progress_bar": False,
@@ -51,6 +52,7 @@ def test_simple(tmpdir):
 
 def test_accumulate_grad_batches(tmpdir):
     trainer_options = {
+        "accelerator": "cpu",
         "default_root_dir": str(tmpdir),
         "enable_progress_bar": False,
         "max_epochs": 1,
@@ -64,6 +66,7 @@ def test_accumulate_grad_batches(tmpdir):
 def test_clip_grad_by_value(tmpdir):
     """Test Horovod running multi-process on CPU."""
     trainer_options = {
+        "accelerator": "cpu",
         "default_root_dir": str(tmpdir),
         "gradient_clip_val": 1.0,
         "gradient_clip_algorithm": "value",
@@ -78,6 +81,7 @@ def test_clip_grad_by_value(tmpdir):
 def test_implicit(tmpdir):
     """Test Horovod without specifying a backend, inferring from env set by `horovodrun`."""
     trainer_options = {
+        "accelerator": "cpu",
         "default_root_dir": str(tmpdir),
         "gradient_clip_val": 1.0,
         "enable_progress_bar": False,
@@ -96,6 +100,7 @@ def test_multi_optimizer(tmpdir):
 
     # fit model
     trainer = Trainer(
+        accelerator="cpu",
         default_root_dir=str(tmpdir),
         enable_progress_bar=False,
         max_epochs=1,
@@ -155,6 +160,7 @@ def test_result_reduce_horovod(tmpdir):
         model.val_dataloader = None
 
         trainer = Trainer(
+            accelerator="cpu",
             default_root_dir=tmpdir,
             limit_train_batches=2,
             limit_val_batches=2,
@@ -195,6 +201,7 @@ def test_multi_optimizer_with_scheduling_stepping(tmpdir):
 
     with patch("horovod.torch.size", return_value=8):
         trainer = Trainer(
+            accelerator="cpu",
             default_root_dir=tmpdir,
             max_epochs=1,
             limit_val_batches=0.5,
