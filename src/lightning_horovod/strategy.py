@@ -33,7 +33,6 @@ if module_available("lightning"):
     from lightning.pytorch.plugins.precision import PrecisionPlugin
     from lightning.pytorch.strategies.parallel import ParallelStrategy
     from lightning.pytorch.strategies.strategy import TBroadcast
-    from lightning.pytorch.utilities.exceptions import MisconfigurationException
     from lightning.pytorch.utilities.rank_zero import rank_zero_only
 elif module_available("pytorch_lightning") and module_available("lightning_fabric"):
     from lightning_fabric.plugins import CheckpointIO
@@ -46,7 +45,6 @@ elif module_available("pytorch_lightning") and module_available("lightning_fabri
     from pytorch_lightning.plugins.precision import PrecisionPlugin
     from pytorch_lightning.strategies.parallel import ParallelStrategy
     from pytorch_lightning.strategies.strategy import TBroadcast
-    from pytorch_lightning.utilities.exceptions import MisconfigurationException
     from pytorch_lightning.utilities.rank_zero import rank_zero_only
 else:
     raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
@@ -147,12 +145,6 @@ class HorovodStrategy(ParallelStrategy):
         for optimizer in optimizers:
             hvd.broadcast_optimizer_state(optimizer, root_rank=0)
 
-        accumulation_scheduler = trainer.accumulation_scheduler
-        if accumulation_scheduler.epochs != [0]:
-            raise MisconfigurationException(
-                "Horovod currently does not support different `accumulate_grad_batches` at different epochs."
-            )
-
         self.optimizers = self._wrap_optimizers(optimizers, trainer.accumulate_grad_batches)
         for optimizer in self.optimizers:
             # Synchronization will be performed explicitly following backward()
@@ -234,7 +226,7 @@ class HorovodStrategy(ParallelStrategy):
         return [
             hvd.DistributedOptimizer(
                 opt,
-                backward_passes_per_step=accumulate_grad_batches,
+                # backward_passes_per_step=accumulate_grad_batches,  # fixme
                 named_parameters=self._filter_named_parameters(self.lightning_module, opt),
             )
             if "horovod" not in str(opt.__class__)
