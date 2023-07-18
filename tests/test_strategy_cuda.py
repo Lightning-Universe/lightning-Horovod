@@ -201,7 +201,7 @@ def test_accuracy_metric_horovod():
                 sk_batch_result = sk_metric(dist_preds, dist_target)
                 assert np.allclose(
                     batch_result.numpy(),
-                    np.ndarray([sk_batch_result]),
+                    np.ndarray([sk_batch_result], dtype=float),
                     atol=0.05,  # todo: this shall be almost zero
                 ), f"with results: {batch_result.numpy()}\n SK ref: {sk_batch_result}"
 
