@@ -58,7 +58,7 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
     class TestModel(BoringModel):
         def on_train_start(self) -> None:
             expected_device = torch.device("cuda", self.trainer.local_rank) if on_gpu else torch.device("cpu")
-            assert self.device == expected_device
+            assert self.device == expected_device, self.device
 
         # ToDo: find alternative for this check
         # def training_epoch_end(self, outputs) -> None:
