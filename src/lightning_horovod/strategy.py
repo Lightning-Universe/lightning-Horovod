@@ -225,6 +225,7 @@ class HorovodStrategy(ParallelStrategy):
     ) -> List["hvd.DistributedOptimizer"]:
         """Wrap optimizers to perform gradient aggregation via allreduce."""
         assert self.lightning_module is not None
+        assert isinstance(accumulate_grad_batches, int), accumulate_grad_batches
         return [
             hvd.DistributedOptimizer(
                 opt,
