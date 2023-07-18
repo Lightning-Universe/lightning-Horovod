@@ -163,7 +163,6 @@ def test_transfer_batch_to_gpu(tmpdir):
     run_model_test_without_loggers(trainer_options, model)
 
 
-@pytest.mark.xfail(raises=RuntimeError, reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not module_available("sklearn"), reason="This tests scikit-learn accuracy.")
 def test_accuracy_metric_horovod():
