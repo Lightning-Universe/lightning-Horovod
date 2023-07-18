@@ -136,6 +136,7 @@ def test_result_reduce_horovod(tmpdir):
         path_here = os.path.abspath(os.path.dirname(__file__))
         path_root = os.path.abspath(os.path.join(path_here, "..", ".."))
         sys.path.insert(0, os.path.abspath(path_root))
+        hvd.init()
 
         class TestModel(BoringModel):
             def training_step(self, batch, batch_idx):
