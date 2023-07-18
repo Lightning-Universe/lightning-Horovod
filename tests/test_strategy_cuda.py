@@ -26,11 +26,11 @@ from tests.helpers import _run_horovod, run_model_test_without_loggers
 
 if module_available("lightning"):
     from lightning.pytorch import Trainer
-    from lightning.pytorch.accelerators import CPUAccelerator
+    from lightning.pytorch.accelerators import CUDAAccelerator
     from lightning.pytorch.demos.boring_classes import BoringModel
 elif module_available("pytorch_lightning"):
     from pytorch_lightning import Trainer
-    from pytorch_lightning.accelerators import CPUAccelerator
+    from pytorch_lightning.accelerators import CUDAAccelerator
     from pytorch_lightning.demos.boring_classes import BoringModel
 else:
     raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
@@ -183,7 +183,7 @@ def test_accuracy_metric_horovod():
     def _compute_batch():
         trainer = Trainer(fast_dev_run=True, strategy=HorovodStrategy(), logger=False)
 
-        assert isinstance(trainer.accelerator, CPUAccelerator)
+        assert isinstance(trainer.accelerator, CUDAAccelerator)
         # TODO: test that we selected the correct strategy based on horovod flags
 
         metric = Accuracy(
