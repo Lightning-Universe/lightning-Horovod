@@ -201,7 +201,7 @@ def test_accuracy_metric_horovod():
             dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
             sk_batch_result = sk_metric(dist_preds, dist_target)
             assert torch.allclose(
-                batch_result.numpy(),
+                batch_result,
                 torch.tensor(sk_batch_result),
                 atol=0.05,  # todo: this shall be almost zero
             ), f"with results: {batch_result}\n SK ref: {sk_batch_result}"
