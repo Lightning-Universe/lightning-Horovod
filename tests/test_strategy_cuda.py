@@ -28,12 +28,10 @@ if module_available("lightning"):
     from lightning.pytorch import Trainer
     from lightning.pytorch.accelerators import CPUAccelerator
     from lightning.pytorch.demos.boring_classes import BoringModel
-    from lightning.pytorch.utilities.exceptions import MisconfigurationException
 elif module_available("pytorch_lightning"):
     from pytorch_lightning import Trainer
     from pytorch_lightning.accelerators import CPUAccelerator
     from pytorch_lightning.demos.boring_classes import BoringModel
-    from pytorch_lightning.utilities.exceptions import MisconfigurationException
 else:
     raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
 
