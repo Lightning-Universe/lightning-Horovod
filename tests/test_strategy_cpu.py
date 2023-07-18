@@ -126,7 +126,7 @@ def test_multi_optimizer(tmpdir):
     assert get_model_params(model.discriminator) == get_optimizer_params(trainer.optimizers[1])
 
 
-@pytest.mark.skip(reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
+@pytest.mark.xfail(RuntimeError, reason="value=_ResultMetric('test_tensor', value=1.0) and HVD.size=2")  # todo
 def test_result_reduce_horovod(tmpdir):
     """Make sure result logging works with Horovod.
 
@@ -137,6 +137,7 @@ def test_result_reduce_horovod(tmpdir):
         path_here = os.path.abspath(os.path.dirname(__file__))
         path_root = os.path.abspath(os.path.join(path_here, "..", ".."))
         sys.path.insert(0, os.path.abspath(path_root))
+        hvd.init()
 
         class TestModel(BoringModel):
             def training_step(self, batch, batch_idx):
@@ -145,12 +146,13 @@ def test_result_reduce_horovod(tmpdir):
                 tensor = torch.tensor([1.0])
                 self.log("test_tensor", tensor, sync_dist=True, reduce_fx="sum", on_step=True, on_epoch=True)
 
-                res = self._results
+                res = self.trainer._results["training_step.test_tensor"]
 
                 # Check that `tensor` is summed across all ranks automatically
-                assert (
-                    res["test_tensor"].item() == hvd.size()
-                ), "Result-Log does not work properly with Horovod and Tensors"
+                assert res.value == hvd.size(), (
+                    "Result-Log does not work properly with Horovod and Tensors."
+                    f"\n ref value={res} and HVD.size={hvd.size()}"
+                )
 
             # ToDo: find alternative for this check
             # def training_epoch_end(self, outputs) -> None:
