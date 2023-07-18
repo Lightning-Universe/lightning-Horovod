@@ -33,7 +33,6 @@ if module_available("lightning"):
     from lightning.pytorch.plugins.precision import PrecisionPlugin
     from lightning.pytorch.strategies.parallel import ParallelStrategy
     from lightning.pytorch.strategies.strategy import TBroadcast
-    from lightning.pytorch.utilities.exceptions import MisconfigurationException
     from lightning.pytorch.utilities.rank_zero import rank_zero_only
 elif module_available("pytorch_lightning") and module_available("lightning_fabric"):
     from lightning_fabric.plugins import CheckpointIO
@@ -46,7 +45,6 @@ elif module_available("pytorch_lightning") and module_available("lightning_fabri
     from pytorch_lightning.plugins.precision import PrecisionPlugin
     from pytorch_lightning.strategies.parallel import ParallelStrategy
     from pytorch_lightning.strategies.strategy import TBroadcast
-    from pytorch_lightning.utilities.exceptions import MisconfigurationException
     from pytorch_lightning.utilities.rank_zero import rank_zero_only
 else:
     raise ModuleNotFoundError("You are missing `lightning` or `pytorch-lightning` package, please install it.")
