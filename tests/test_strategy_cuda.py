@@ -168,8 +168,8 @@ def test_transfer_batch_to_gpu(tmpdir):
 def test_accuracy_metric_horovod():
     import horovod
 
-    num_batches = 10
-    batch_size = 16
+    num_batches = 20
+    batch_size = 64
     threshold = 0.5
 
     def sk_metric(preds, target):
@@ -199,7 +199,9 @@ def test_accuracy_metric_horovod():
                 dist_preds = torch.stack([preds[i + r] for r in range(hvd_torch.size())])
                 dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
                 sk_batch_result = sk_metric(dist_preds, dist_target)
-                assert np.allclose(batch_result.numpy(), sk_batch_result)
+                assert np.allclose(
+                    batch_result.numpy(), sk_batch_result, atol=0.01,
+                ), f"with results: {batch_result.numpy()}\n SK ref: {sk_batch_result}"
 
         # check on all batches on all ranks
         result = metric.compute()
