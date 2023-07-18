@@ -144,7 +144,7 @@ def test_result_reduce_horovod(tmpdir):
                 tensor = torch.tensor([1.0])
                 self.log("test_tensor", tensor, sync_dist=True, reduce_fx="sum", on_step=True, on_epoch=True)
 
-                res = self._results
+                res = self.trainer._results
 
                 # Check that `tensor` is summed across all ranks automatically
                 assert (
