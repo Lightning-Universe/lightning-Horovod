@@ -202,7 +202,7 @@ def test_accuracy_metric_horovod():
             sk_batch_result = sk_metric(dist_preds, dist_target)
             assert torch.allclose(
                 batch_result,
-                torch.tensor(sk_batch_result),
+                torch.tensor(sk_batch_result, dtype=batch_result.dtype),
                 atol=0.05,  # todo: this shall be almost zero
             ), f"with results: {batch_result}\n SK ref: {sk_batch_result}"
 
