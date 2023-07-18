@@ -126,7 +126,6 @@ def test_multi_optimizer(tmpdir):
     assert get_model_params(model.discriminator) == get_optimizer_params(trainer.optimizers[1])
 
 
-@pytest.mark.skip(reason="TODO: CI agent.jobstatus=Succeeded: Permission denied")
 def test_result_reduce_horovod(tmpdir):
     """Make sure result logging works with Horovod.
 
