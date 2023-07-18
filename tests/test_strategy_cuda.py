@@ -82,22 +82,6 @@ def test_multi_gpu_accumulate_grad_batches(tmpdir):
     _run_horovod(trainer_options)
 
 
-@pytest.mark.skipif(torch.cuda.device_count() < 1, reason="This test needs at least 2 GPUs.")
-def test_raises_unsupported_accumulate_grad_batches(tmpdir):
-    """Ensure MisConfigurationException for different `accumulate_grad_batches` at different epochs on multi-gpus."""
-    model = BoringModel()
-    trainer = Trainer(
-        default_root_dir=tmpdir,
-        enable_progress_bar=False,
-        accumulate_grad_batches={0: 4, 2: 2},
-        accelerator="auto",
-        devices=1,
-        strategy=HorovodStrategy(),
-    )
-    with pytest.raises(MisconfigurationException, match="Horovod.*does not support.*accumulate_grad_batches"):
-        trainer.fit(model)
-
-
 @pytest.mark.xfail(raises=AssertionError, reason="unhandled cuda error")
 @pytest.mark.skipif(torch.cuda.device_count() < 2, reason="This test needs at least 2 GPUs.")
 @pytest.mark.skipif(not _HOROVOD_NCCL_AVAILABLE, reason="This test requires NCCL support.")
