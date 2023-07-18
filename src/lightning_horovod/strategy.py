@@ -147,12 +147,6 @@ class HorovodStrategy(ParallelStrategy):
         for optimizer in optimizers:
             hvd.broadcast_optimizer_state(optimizer, root_rank=0)
 
-        accumulation_scheduler = trainer.accumulation_scheduler
-        if accumulation_scheduler.epochs != [0]:
-            raise MisconfigurationException(
-                "Horovod currently does not support different `accumulate_grad_batches` at different epochs."
-            )
-
         self.optimizers = self._wrap_optimizers(optimizers, trainer.accumulate_grad_batches)
         for optimizer in self.optimizers:
             # Synchronization will be performed explicitly following backward()
