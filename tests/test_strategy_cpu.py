@@ -144,12 +144,13 @@ def test_result_reduce_horovod(tmpdir):
                 tensor = torch.tensor([1.0])
                 self.log("test_tensor", tensor, sync_dist=True, reduce_fx="sum", on_step=True, on_epoch=True)
 
-                res = self.trainer._results
+                res = self.trainer._results["training_step.test_tensor"]
 
                 # Check that `tensor` is summed across all ranks automatically
-                assert (
-                    res["training_step.test_tensor"].item() == hvd.size()
-                ), "Result-Log does not work properly with Horovod and Tensors"
+                assert res.value == hvd.size(), (
+                    "Result-Log does not work properly with Horovod and Tensors."
+                    f"\n ref value={res} and HVD.size={hvd.size()}"
+                )
 
             # ToDo: find alternative for this check
             # def training_epoch_end(self, outputs) -> None:
