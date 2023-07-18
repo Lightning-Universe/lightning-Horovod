@@ -200,7 +200,9 @@ def test_accuracy_metric_horovod():
                 dist_target = torch.stack([target[i + r] for r in range(hvd_torch.size())])
                 sk_batch_result = sk_metric(dist_preds, dist_target)
                 assert np.allclose(
-                    batch_result.numpy(), sk_batch_result, atol=0.01,
+                    batch_result.numpy(),
+                    sk_batch_result,
+                    atol=0.01,
                 ), f"with results: {batch_result.numpy()}\n SK ref: {sk_batch_result}"
 
         # check on all batches on all ranks
