@@ -30,7 +30,8 @@ from lightning_horovod.strategy import HorovodStrategy
 PYTHONPATH = os.getenv("PYTHONPATH", "")
 if ":" in PYTHONPATH:
     sys.path = PYTHONPATH.split(":") + sys.path
-torch.use_deterministic_algorithms(False)
+if torch.cuda.is_available():
+    torch.backends.cudnn.enabled = False
 
 
 if module_available("lightning"):
