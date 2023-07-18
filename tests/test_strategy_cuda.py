@@ -168,8 +168,8 @@ def test_transfer_batch_to_gpu(tmpdir):
 def test_accuracy_metric_horovod():
     import horovod
 
-    num_batches = 20
-    batch_size = 64
+    num_batches = 200
+    batch_size = 512
     threshold = 0.5
 
     def sk_metric(preds, target):
