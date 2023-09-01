@@ -29,7 +29,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip --version
+        pip install "pip<23.0"  # HotFix for bad Horovod requirements
         pip install -U -q -r requirements.txt -r docs/requirements.txt \
           -f https://download.pytorch.org/whl/cpu/torch_stable.html
         # install Texlive, see https://linuxconfig.org/how-to-install-latex-on-ubuntu-20-04-focal-fossa-linux
@@ -40,7 +40,7 @@ jobs:
       run: make html --jobs 2
 
     - name: Deploy 🚀
-      uses: JamesIves/github-pages-deploy-action@v4.4.2
+      uses: JamesIves/github-pages-deploy-action@v4.4.3
       if: ${{ github.event_name == 'push' }}
       with:
         token: ${{ secrets.GITHUB_TOKEN }}

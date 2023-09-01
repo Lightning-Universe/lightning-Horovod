@@ -58,7 +58,7 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
     class TestModel(BoringModel):
         def on_train_start(self) -> None:
             expected_device = torch.device("cuda", self.trainer.local_rank) if on_gpu else torch.device("cpu")
-            assert self.device == expected_device
+            assert self.device == expected_device, f"{self.device} is not expected {expected_device}"
 
         # ToDo: find alternative for this check
         # def training_epoch_end(self, outputs) -> None:
@@ -93,8 +93,7 @@ def run_test_from_config(trainer_options, on_gpu, check_size):
         batch = next(iter(dataloader))
         pretrained_model(batch)
 
-    # test HPC saving
-    # save logger to make sure we get all the metrics
+    # test HPC saving - save logger to make sure we get all the metrics
     if trainer.logger:
         trainer.logger.finalize("finished")
     hpc_save_path = trainer._checkpoint_connector.hpc_save_path(ckpt_path)
