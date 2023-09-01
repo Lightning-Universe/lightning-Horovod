@@ -3,7 +3,7 @@
 [![lightning](https://img.shields.io/badge/-Lightning_2.0+-792ee5?logo=pytorchlightning&logoColor=white)](https://lightning.ai/)
 [![PyPI Status](https://badge.fury.io/py/lightning-horovod.svg)](https://badge.fury.io/py/lightning-horovod)
 [![PyPI - Python Version](https://img.shields.io/pypi/pyversions/lightning-horovod)](https://pypi.org/project/lightning-horovod/)
-[![PyPI Status](https://pepy.tech/badge/lightning-horovod)](https://pepy.tech/project/lightning-horovod)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/lightning-Horovod)](https://pepy.tech/project/lightning-horovod)
 [![Deploy Docs](https://github.com/Lightning-AI/lightning-Horovod/actions/workflows/docs-deploy.yml/badge.svg)](https://lightning-ai.github.io/lightning-Horovod/)
 
 [![General checks](https://github.com/Lightning-Universe/lightning-Horovod/actions/workflows/ci-checks.yml/badge.svg?event=push)](https://github.com/Lightning-Universe/lightning-Horovod/actions/workflows/ci-checks.yml)
